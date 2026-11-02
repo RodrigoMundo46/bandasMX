@@ -1,0 +1,145 @@
+/* =========================================================
+   Bandas MX - Estilos propios (complementan a Bootstrap)
+   Diseño minimal: blanco, negro y grises.
+   ========================================================= */
+
+:root {
+  --color-texto: #111111;
+  --color-suave: #6c757d;
+  --color-borde: #e5e5e5;
+  --color-fondo: #ffffff;
+  --color-fondo-alt: #f7f7f7;
+}
+
+body {
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+/* ---------- Navegación ---------- */
+.navbar {
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.navbar .nav-link.active {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+/* ---------- Títulos ---------- */
+h1,
+h2 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.texto-suave {
+  color: var(--color-suave);
+}
+
+/* ---------- Inicio ---------- */
+.portada {
+  padding: 5rem 0 4rem;
+}
+
+.portada h1 {
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  line-height: 1;
+}
+
+.paso {
+  border-top: 1px solid var(--color-texto);
+  padding-top: 1rem;
+}
+
+/* ---------- Tarjetas del listado ---------- */
+.tarjeta-banda {
+  border: 1px solid var(--color-borde);
+  border-radius: 0;
+  transition: border-color 0.15s ease;
+}
+
+.tarjeta-banda:hover {
+  border-color: var(--color-texto);
+}
+
+.foto-banda {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  width: 100%;
+  background-color: var(--color-fondo-alt);
+}
+
+.etiqueta {
+  display: inline-block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--color-texto);
+  padding: 0.1rem 0.5rem;
+}
+
+/* ---------- Detalle ---------- */
+.foto-detalle {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background-color: var(--color-fondo-alt);
+}
+
+.lista-discos li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.lista-discos .anio {
+  color: var(--color-suave);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Formularios ---------- */
+.form-control,
+.btn,
+.alert,
+.modal-content {
+  border-radius: 0;
+}
+
+.form-control:focus {
+  border-color: var(--color-texto);
+  box-shadow: none;
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.foto-actual {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border: 1px solid var(--color-borde);
+}
+
+/* ---------- Pie de página ---------- */
+footer {
+  border-top: 1px solid var(--color-borde);
+  font-size: 0.875rem;
+}
