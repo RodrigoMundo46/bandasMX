@@ -25,7 +25,7 @@ Después de cada operación la información en pantalla se actualiza automática
 ## Tecnologías utilizadas
 
 - **HTML5** semántico (`header`, `nav`, `main`, `section`, `article`, `footer`, `fieldset`)
-- **CSS3** + **Bootstrap 5.3** (diseño responsivo, desde CDN)
+- **CSS3** + **Bootstrap 5.3.3** (diseño responsivo, incluido en el proyecto; no necesita internet)
 - **JavaScript** (validación de formularios, manipulación del DOM, `fetch`, alertas y modales)
 - **PHP 8** (API que conecta las páginas con la base de datos)
 - **SQLite** con **PDO** (base de datos)
@@ -39,8 +39,11 @@ bandas-mx/
 ├── bandas.html
 ├── detalle.html
 ├── formulario.html
-├── css/styles.css
+├── css/
+│   ├── bootstrap.min.css   # Bootstrap 5.3.3 (local)
+│   └── styles.css          # Estilos propios
 ├── js/
+│   ├── bootstrap.bundle.min.js  # Bootstrap 5.3.3 (local)
 │   ├── comun.js            # Funciones compartidas
 │   ├── bandas.js           # Listado, búsqueda y eliminación
 │   ├── detalle.js          # Detalle de una banda
@@ -84,7 +87,7 @@ El esquema completo está en `database/schema.sql`.
 
 ## Instrucciones de ejecución
 
-Requisitos: **WAMP64** (con PHP 8) y conexión a internet (Bootstrap se carga desde CDN).
+Requisitos: **WAMP64** (con PHP 8). No se necesita conexión a internet: Bootstrap viene incluido en el proyecto.
 
 1. Instalar y abrir **WAMP64**. Esperar a que el ícono de la barra de tareas se ponga **verde**.
 2. Copiar la carpeta `bandas-mx` dentro de `C:\wamp64\www\`, o clonar el repositorio ahí:

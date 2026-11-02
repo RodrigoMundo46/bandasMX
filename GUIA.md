@@ -94,7 +94,7 @@ La función `responder()` convierte el resultado a JSON con `json_encode`, pone 
 
 ## 1.5 Las páginas y su JavaScript
 
-Todas las páginas comparten la misma barra de navegación (Inicio, Bandas, Agregar banda), el mismo pie de página, Bootstrap desde CDN y `css/styles.css`. El archivo `js/comun.js` tiene funciones que usan varias páginas:
+Todas las páginas comparten la misma barra de navegación (Inicio, Bandas, Agregar banda), el mismo pie de página, Bootstrap y `css/styles.css`. Bootstrap 5.3.3 está guardado dentro del proyecto (`css/bootstrap.min.css` y `js/bootstrap.bundle.min.js`), así que el sitio se ve y funciona igual aunque la computadora no tenga internet. El archivo `js/comun.js` tiene funciones que usan varias páginas:
 
 - `escaparHTML(texto)`: convierte caracteres especiales para que lo que escribió un usuario no se ejecute como HTML.
 - `obtenerParametro(nombre)`: lee parámetros de la URL, como `?id=3`.
