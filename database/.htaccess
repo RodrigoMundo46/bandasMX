@@ -1,0 +1,2 @@
+# Impide que el navegador descargue la base de datos y los archivos SQL
+Require all denied
