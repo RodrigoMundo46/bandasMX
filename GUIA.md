@@ -115,9 +115,8 @@ Página de presentación con el nombre del sitio, una descripción breve y dos b
 **Búsqueda por nombre:**
 
 1. Cada vez que el usuario escribe en el campo de búsqueda se dispara el evento `input`.
-2. Se espera 250 ms sin teclear (con `setTimeout`) para no hacer una petición por cada letra.
-3. Se llama `cargarBandas()`, que ahora manda el texto: `api/bandas.php?nombre=zoe`.
-4. En PHP la consulta es:
+2. Se llama `cargarBandas()`, que ahora manda el texto: `api/bandas.php?nombre=zoe`.
+3. En PHP la consulta es:
 
 ```sql
    SELECT id, nombre, ciudad, genero, foto FROM bandas
