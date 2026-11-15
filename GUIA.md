@@ -82,8 +82,6 @@ Un solo archivo PHP atiende todas las operaciones. Decide qué hacer según el *
 
 > La actualización usa `POST` y no `PUT` porque PHP solo procesa los archivos subidos (`$\_FILES`) en peticiones POST.
 
-Todas las consultas usan **sentencias preparadas** (`$db->prepare('... WHERE id = ?')` y `execute(\[$id])`). Los datos del usuario nunca se pegan directo en el SQL, así se evita la inyección SQL.
-
 La función `responder()` convierte el resultado a JSON con `json\_encode`, pone el código HTTP y termina el script. Códigos que puede regresar:
 
 * `200` / `201` — operación correcta / banda creada.
