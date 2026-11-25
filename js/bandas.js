@@ -1,16 +1,11 @@
-// =========================================================
-//  bandas.html - Listado, búsqueda por nombre y eliminación
-// =========================================================
-
 const listaBandas = document.getElementById('listaBandas');
 const campoBusqueda = document.getElementById('busqueda');
 const contador = document.getElementById('contador');
 const sinResultados = document.getElementById('sinResultados');
 const alertas = document.getElementById('alertas');
 
-let temporizador; // para no consultar al servidor en cada tecla
+let temporizador; 
 
-// Pide las bandas al servidor (filtradas por nombre si hay texto)
 async function cargarBandas() {
   const texto = campoBusqueda.value.trim();
   try {
@@ -24,7 +19,6 @@ async function cargarBandas() {
   }
 }
 
-// Construye las tarjetas en el DOM
 function pintarBandas(bandas, texto) {
   listaBandas.innerHTML = '';
 
@@ -67,7 +61,7 @@ function pintarBandas(bandas, texto) {
         banda,
         () => {
           mostrarAlerta(alertas, `Se eliminó <strong>${escaparHTML(banda.nombre)}</strong>.`, 'success');
-          cargarBandas(); // el listado se actualiza solo
+          cargarBandas();
         },
         (mensaje) => mostrarAlerta(alertas, escaparHTML(mensaje), 'danger')
       );
@@ -77,13 +71,11 @@ function pintarBandas(bandas, texto) {
   });
 }
 
-// Búsqueda mientras se escribe
 campoBusqueda.addEventListener('input', () => {
   clearTimeout(temporizador);
   temporizador = setTimeout(cargarBandas, 250);
 });
 
-// Si se presiona Enter, no recargar la página
 document.getElementById('formBusqueda').addEventListener('submit', (e) => {
   e.preventDefault();
   clearTimeout(temporizador);

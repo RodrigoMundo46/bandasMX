@@ -1,17 +1,4 @@
 <?php
-// =========================================================
-//  Bandas MX - API (PHP + SQLite)
-//
-//  GET    api/bandas.php              -> listado de bandas
-//  GET    api/bandas.php?nombre=zo    -> buscar por nombre
-//  GET    api/bandas.php?id=3         -> una banda con su discografía
-//  POST   api/bandas.php              -> crear banda (con foto)
-//  POST   api/bandas.php?id=3         -> actualizar banda (foto opcional)
-//  DELETE api/bandas.php?id=3         -> eliminar banda
-//
-//  Todas las respuestas son JSON.
-// =========================================================
-
 require __DIR__ . '/conexion.php';
 
 header('Content-Type: application/json; charset=utf-8');
@@ -19,16 +6,12 @@ header('Content-Type: application/json; charset=utf-8');
 const CARPETA_FOTOS = __DIR__ . '/../uploads';
 const TAMANO_MAXIMO = 2 * 1024 * 1024; // 2 MB
 
-// Tipos de imagen permitidos => extensión con la que se guardan
 const TIPOS_PERMITIDOS = [
     IMAGETYPE_JPEG => 'jpg',
     IMAGETYPE_PNG  => 'png',
     IMAGETYPE_WEBP => 'webp',
 ];
 
-// ---------- Funciones de apoyo ----------
-
-// Envía una respuesta JSON con su código HTTP y termina el script
 function responder(int $codigo, $datos): void
 {
     http_response_code($codigo);
@@ -41,7 +24,6 @@ function responderErrores(int $codigo, array $errores): void
     responder($codigo, ['errores' => $errores]);
 }
 
-// Regresa una banda con su discografía, o null si no existe
 function obtenerBanda(PDO $db, int $id): ?array
 {
     $consulta = $db->prepare('SELECT id, nombre, ciudad, genero, foto FROM bandas WHERE id = ?');
@@ -63,7 +45,6 @@ function obtenerBanda(PDO $db, int $id): ?array
     return $banda;
 }
 
-// Borra un archivo de foto de la carpeta uploads (si existe)
 function borrarFoto(?string $rutaPublica): void
 {
     if (!$rutaPublica || strpos($rutaPublica, 'uploads/') !== 0) {
@@ -75,9 +56,6 @@ function borrarFoto(?string $rutaPublica): void
     }
 }
 
-// Revisa y guarda la foto enviada en el campo "foto".
-// Regresa la ruta pública (uploads/archivo.jpg), null si no se envió foto,
-// o termina con error 400 si la foto no es válida.
 function guardarFoto(): ?string
 {
     if (!isset($_FILES['foto']) || $_FILES['foto']['error'] === UPLOAD_ERR_NO_FILE) {
@@ -94,7 +72,6 @@ function guardarFoto(): ?string
         responderErrores(400, ['No se pudo subir la foto.']);
     }
 
-    // getimagesize lee el contenido real del archivo (no confía en la extensión)
     $info = @getimagesize($archivo['tmp_name']);
     if (!$info || !isset(TIPOS_PERMITIDOS[$info[2]])) {
         responderErrores(400, ['La foto debe ser JPG, PNG o WEBP.']);
@@ -112,8 +89,6 @@ function guardarFoto(): ?string
     return 'uploads/' . $nombreArchivo;
 }
 
-// Valida los datos que llegan del formulario.
-// Regresa [errores, datos] con los datos ya limpios.
 function validarBanda(array $entrada): array
 {
     $errores = [];
@@ -160,13 +135,11 @@ function validarBanda(array $entrada): array
     ]];
 }
 
-// Indica si un error de PDO es por nombre repetido (restricción UNIQUE)
 function esNombreRepetido(PDOException $error): bool
 {
     return strpos($error->getMessage(), 'UNIQUE constraint failed') !== false;
 }
 
-// Inserta la discografía de una banda
 function insertarDiscos(PDO $db, int $bandaId, array $discos): void
 {
     $consulta = $db->prepare('INSERT INTO discos (banda_id, titulo, anio) VALUES (?, ?, ?)');
@@ -175,24 +148,17 @@ function insertarDiscos(PDO $db, int $bandaId, array $discos): void
     }
 }
 
-// =========================================================
-//  Rutas
-// =========================================================
-
 $db = obtenerConexion();
 $metodo = $_SERVER['REQUEST_METHOD'];
 $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
 
-// ---------- READ ----------
 if ($metodo === 'GET') {
-    // Una banda con su discografía
     if ($id !== null) {
         $banda = obtenerBanda($db, $id);
         if (!$banda) responderErrores(404, ['La banda no existe.']);
         responder(200, $banda);
     }
 
-    // Listado (con búsqueda opcional por nombre, sin importar acentos ni mayúsculas)
     $nombre = trim($_GET['nombre'] ?? '');
     $consulta = $db->prepare(
         "SELECT id, nombre, ciudad, genero, foto FROM bandas
@@ -207,9 +173,7 @@ if ($metodo === 'GET') {
     responder(200, $bandas);
 }
 
-// ---------- CREATE (sin id) y UPDATE (con id) ----------
 if ($metodo === 'POST') {
-    // Si la foto supera post_max_size, PHP deja $_POST vacío
     if (empty($_POST) && empty($_FILES)) {
         responderErrores(400, ['No se recibieron datos. Si subiste una foto, puede que sea demasiado grande.']);
     }
@@ -230,10 +194,9 @@ if ($metodo === 'POST') {
         responderErrores(400, $errores);
     }
 
-    $fotoNueva = guardarFoto(); // null si no se mandó foto (solo permitido al editar)
+    $fotoNueva = guardarFoto();
 
     try {
-        // Transacción: si algo falla, no queda nada a medias
         $db->beginTransaction();
 
         if ($anterior) {
@@ -259,7 +222,6 @@ if ($metodo === 'POST') {
         responderErrores(500, ['Error al guardar la banda.']);
     }
 
-    // Si se reemplazó la foto, se borra el archivo anterior
     if ($anterior && $fotoNueva) {
         borrarFoto($anterior['foto']);
     }
@@ -267,14 +229,12 @@ if ($metodo === 'POST') {
     responder($anterior ? 200 : 201, obtenerBanda($db, $bandaId));
 }
 
-// ---------- DELETE ----------
 if ($metodo === 'DELETE') {
     if ($id === null) responderErrores(400, ['Falta el id de la banda.']);
 
     $banda = obtenerBanda($db, $id);
     if (!$banda) responderErrores(404, ['La banda no existe.']);
 
-    // Sus discos se borran en cascada (ON DELETE CASCADE)
     $db->prepare('DELETE FROM bandas WHERE id = ?')->execute([$id]);
     borrarFoto($banda['foto']);
     responder(200, ['mensaje' => 'Banda eliminada.']);

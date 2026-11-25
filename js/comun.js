@@ -1,21 +1,13 @@
-// =========================================================
-//  Funciones compartidas por todas las páginas
-// =========================================================
-
-// Evita que el texto de la base de datos se interprete como HTML
 function escaparHTML(texto) {
   const div = document.createElement('div');
   div.textContent = texto ?? '';
   return div.innerHTML;
 }
 
-// Lee un parámetro de la URL, ej. obtenerParametro('id')
 function obtenerParametro(nombre) {
   return new URLSearchParams(window.location.search).get(nombre);
 }
 
-// Muestra una alerta de Bootstrap dentro del contenedor indicado.
-// tipo: 'success' | 'danger' | 'warning' | 'info'
 function mostrarAlerta(contenedor, mensaje, tipo = 'success') {
   contenedor.innerHTML = `
     <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
@@ -25,7 +17,6 @@ function mostrarAlerta(contenedor, mensaje, tipo = 'success') {
   contenedor.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-// Mensajes que se muestran después de redirigir (?msg=...)
 const MENSAJES = {
   creada: 'La banda se agregó correctamente.',
   actualizada: 'Los datos de la banda se actualizaron correctamente.',
@@ -36,24 +27,18 @@ function mostrarMensajeDeURL(contenedor) {
   const clave = obtenerParametro('msg');
   if (MENSAJES[clave]) {
     mostrarAlerta(contenedor, MENSAJES[clave], 'success');
-    // Quita ?msg= de la URL para que no se repita al recargar
     const url = new URL(window.location.href);
     url.searchParams.delete('msg');
     window.history.replaceState({}, '', url);
   }
 }
 
-// ---------- Eliminación con ventana de confirmación ----------
-// Usa el modal #modalEliminar que existe en bandas.html y detalle.html.
-// alEliminar se ejecuta cuando el servidor confirma el borrado.
 function confirmarEliminar(banda, alEliminar, alFallar) {
   const modalEl = document.getElementById('modalEliminar');
   const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
   const boton = document.getElementById('btnConfirmarEliminar');
 
   document.getElementById('nombreEliminar').textContent = banda.nombre;
-
-  // Se reemplaza el botón para no acumular eventos de usos anteriores
   const botonNuevo = boton.cloneNode(true);
   boton.replaceWith(botonNuevo);
 

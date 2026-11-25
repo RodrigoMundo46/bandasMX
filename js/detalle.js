@@ -1,7 +1,3 @@
-// =========================================================
-//  detalle.html - Muestra una banda con su discografía
-// =========================================================
-
 const alertas = document.getElementById('alertas');
 const cargando = document.getElementById('cargando');
 const detalle = document.getElementById('detalle');

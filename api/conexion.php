@@ -1,28 +1,15 @@
 <?php
-// =========================================================
-//  Conexión a la base de datos SQLite con PDO.
-//  Si database/bandas.db no tiene las tablas, se crean con
-//  schema.sql y se cargan los datos iniciales de seed.sql.
-// =========================================================
-
 function obtenerConexion(): PDO
 {
     $carpetaDb = __DIR__ . '/../database';
     $rutaDb = $carpetaDb . '/bandas.db';
-
-    // PDO::connect existe desde PHP 8.4 y regresa un objeto específico de SQLite;
-    // en versiones anteriores se usa new PDO(...)
     $db = method_exists('PDO', 'connect')
         ? PDO::connect('sqlite:' . $rutaDb)
         : new PDO('sqlite:' . $rutaDb);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);       // errores como excepciones
-    $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);  // filas como arreglos asociativos
-
-    // SQLite no activa las llaves foráneas por defecto
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);   
+    $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC); 
     $db->exec('PRAGMA foreign_keys = ON');
 
-    // Función propia para buscar sin importar acentos ni mayúsculas
-    // (así "mana" encuentra "Maná")
     $sinAcentos = function ($texto) {
         $texto = strtolower((string) $texto);
         return strtr($texto, [
@@ -34,9 +21,9 @@ function obtenerConexion(): PDO
         ]);
     };
     if (method_exists($db, 'createFunction')) {
-        $db->createFunction('sin_acentos', $sinAcentos, 1);        // PHP 8.4 o superior
+        $db->createFunction('sin_acentos', $sinAcentos, 1);
     } else {
-        $db->sqliteCreateFunction('sin_acentos', $sinAcentos, 1);  // PHP 8.3 o anterior
+        $db->sqliteCreateFunction('sin_acentos', $sinAcentos, 1);
     }
 
     $existeTabla = $db

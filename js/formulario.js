@@ -1,7 +1,3 @@
-// =========================================================
-//  formulario.html - Crear (sin ?id) o editar (con ?id=N)
-// =========================================================
-
 const formulario = document.getElementById('formBanda');
 const alertas = document.getElementById('alertas');
 const listaDiscos = document.getElementById('listaDiscos');
@@ -15,13 +11,12 @@ const campoCiudad = document.getElementById('ciudad');
 const campoGenero = document.getElementById('genero');
 
 const TIPOS_FOTO = ['image/jpeg', 'image/png', 'image/webp'];
-const TAMANO_MAXIMO = 2 * 1024 * 1024; // 2 MB (límite por defecto de PHP en WAMP)
+const TAMANO_MAXIMO = 2 * 1024 * 1024;
 const ANIO_ACTUAL = new Date().getFullYear();
 
 const id = obtenerParametro('id');
 const esEdicion = Boolean(id);
 
-// ---------- Filas de discografía ----------
 
 function agregarFilaDisco(titulo = '', anio = '') {
   const fila = plantillaDisco.content.firstElementChild.cloneNode(true);
@@ -36,7 +31,6 @@ function agregarFilaDisco(titulo = '', anio = '') {
     fila.remove();
   });
 
-  // Quita el estado de error cuando el usuario corrige
   [campoTitulo, campoAnio].forEach((campo) =>
     campo.addEventListener('input', () => campo.classList.remove('is-invalid'))
   );
@@ -50,8 +44,6 @@ document.getElementById('btnAgregarDisco').addEventListener('click', () => {
   agregarFilaDisco().focus();
 });
 
-// ---------- Validación ----------
-
 function marcar(campo, esValido) {
   campo.classList.toggle('is-invalid', !esValido);
   campo.classList.toggle('is-valid', esValido);
@@ -63,7 +55,6 @@ function validarFoto() {
   const errorFoto = document.getElementById('errorFoto');
 
   if (!archivo) {
-    // En edición la foto es opcional (se conserva la actual)
     if (esEdicion) {
       campoFoto.classList.remove('is-invalid', 'is-valid');
       return true;
@@ -113,7 +104,6 @@ function validarDiscos() {
 }
 
 function validarFormulario() {
-  // Se evalúan todos para marcar todos los errores a la vez
   const resultados = [
     validarFoto(),
     validarTexto(campoNombre),
@@ -124,13 +114,10 @@ function validarFormulario() {
   return resultados.every(Boolean);
 }
 
-// Validación en vivo de los campos de texto y la foto
 [campoNombre, campoCiudad, campoGenero].forEach((campo) =>
   campo.addEventListener('input', () => validarTexto(campo))
 );
 campoFoto.addEventListener('change', validarFoto);
-
-// ---------- Envío ----------
 
 function obtenerDiscos() {
   return [...listaDiscos.querySelectorAll('.fila-disco')].map((fila) => ({
@@ -149,7 +136,6 @@ formulario.addEventListener('submit', async (evento) => {
     return;
   }
 
-  // FormData permite mandar la foto junto con los demás datos
   const datos = new FormData();
   if (campoFoto.files[0]) datos.append('foto', campoFoto.files[0]);
   datos.append('nombre', campoNombre.value.trim());
@@ -162,8 +148,6 @@ formulario.addEventListener('submit', async (evento) => {
   btnGuardar.textContent = 'Guardando…';
 
   try {
-    // Crear: POST api/bandas.php   |   Editar: POST api/bandas.php?id=N
-    // (PHP solo procesa archivos subidos en peticiones POST)
     const url = esEdicion ? `api/bandas.php?id=${encodeURIComponent(id)}` : 'api/bandas.php';
     const respuesta = await fetch(url, { method: 'POST', body: datos });
     const resultado = await respuesta.json();
@@ -183,8 +167,6 @@ formulario.addEventListener('submit', async (evento) => {
     btnGuardar.textContent = textoBoton;
   }
 });
-
-// ---------- Modo edición: cargar los datos actuales ----------
 
 async function cargarParaEditar() {
   document.title = 'Editar banda | Bandas MX';
@@ -221,5 +203,5 @@ if (esEdicion) {
   cargarParaEditar();
 } else {
   document.getElementById('linkAgregar').classList.add('active');
-  agregarFilaDisco(); // empieza con una fila vacía
+  agregarFilaDisco();
 }
